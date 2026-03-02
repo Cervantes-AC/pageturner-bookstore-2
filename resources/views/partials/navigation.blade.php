@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <a href="{{ route('home') }}" class="text-xl font-bold">📚 PageTurner</a>
+                <a href="{{ route('home') }}" class="text-xl font-bold">PageTurner</a>
                 <div class="hidden md:flex ml-10 space-x-4">
                     <a href="{{ route('home') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Home</a>
                     <a href="{{ route('books.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Books</a>
@@ -22,7 +22,10 @@
                 @endguest
                 @auth
                     <a href="{{ route('orders.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">My Orders</a>
-                    <span class="text-indigo-200">{{ auth()->user()->name }}</span>
+                    <a href="{{ route('profile.edit') }}" class="text-indigo-200 hover:text-white hover:bg-indigo-700 px-3 py-2 rounded-md">
+                            {{ auth()->user()->name }}
+                        </a>
+
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Logout</button>

@@ -22,7 +22,9 @@
                 @endguest
                 @auth
                     <a href="{{ route('orders.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">My Orders</a>
-                    <span class="text-indigo-200">{{ auth()->user()->name }}</span>
+                     <a href="{{ route('profile.edit') }}" class="text-indigo-200 hover:text-white hover:bg-indigo-700 px-3 py-2 rounded-md">
+                            {{ auth()->user()->name }}
+                        </a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Logout</button>
