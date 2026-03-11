@@ -1,12 +1,12 @@
 @props(['type' => 'info'])
 @php
 $classes = [
-    'success' => 'bg-green-100 border-green-400 text-green-700',
-    'error'   => 'bg-red-100 border-red-400 text-red-700',
-    'warning' => 'bg-yellow-100 border-yellow-400 text-yellow-700',
-    'info'    => 'bg-blue-100 border-blue-400 text-blue-700',
+    'success' => 'bg-green-900/30 border-green-700/50 text-green-400',
+    'error'   => 'bg-red-900/30 border-red-700/50 text-red-400',
+    'warning' => 'bg-yellow-900/30 border-yellow-700/50 text-yellow-400',
+    'info'    => 'bg-blue-900/30 border-blue-700/50 text-blue-400',
 ];
 @endphp
-<div {{ $attributes->merge(['class' => 'border px-4 py-3 rounded ' . ($classes[$type] ?? $classes['info'])]) }}>
+<div {{ $attributes->merge(['class' => 'border px-4 py-3 rounded-lg backdrop-blur-sm ' . ($classes[$type] ?? $classes['info'])]) }}>
     {{ $slot }}
 </div>

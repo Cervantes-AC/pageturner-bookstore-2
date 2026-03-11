@@ -12,9 +12,16 @@ class ReviewController extends Controller
 {
     public function store(Request $request, Book $book)
     {
-        // Check if user has purchased the book
+        $this->authorize('create', Review::class);
+
+        // Check if user has purchased this book
         if (!auth()->user()->hasPurchased($book->id)) {
             return back()->with('error', 'You can only review books you have purchased.');
+        }
+
+        // Check if user already reviewed this book
+        if ($book->reviews()->where('user_id', auth()->id())->exists()) {
+            return back()->with('error', 'You have already reviewed this book.');
         }
 
         $validated = $request->validate([
@@ -22,24 +29,11 @@ class ReviewController extends Controller
             'comment' => 'nullable|string|max:1000',
         ]);
 
-        $validated['user_id'] = auth()->id();
-        $validated['book_id'] = $book->id;
-
-        $existingReview = Review::where('user_id', auth()->id())
-            ->where('book_id', $book->id)
-            ->first();
-
-        if ($existingReview) {
-            $existingReview->update($validated);
-            $message = 'Review updated successfully!';
-            $review = $existingReview;
-        } else {
-            $review = Review::create($validated);
-            $message = 'Review submitted successfully!';
-        }
-
-        // Load relationships for notification
-        $review->load(['user', 'book']);
+        $review = $book->reviews()->create([
+            'user_id' => auth()->id(),
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'],
+        ]);
 
         // Notify all admins about new review
         $admins = User::where('role', 'admin')->get();
@@ -47,20 +41,15 @@ class ReviewController extends Controller
             $admin->notify(new NewReviewNotification($review));
         }
 
-        return redirect()->route('books.show', $book)
-            ->with('success', $message);
+        return back()->with('success', 'Review submitted successfully!');
     }
 
     public function destroy(Review $review)
     {
-        if (auth()->id() !== $review->user_id && !auth()->user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('delete', $review);
 
-        $book = $review->book;
         $review->delete();
 
-        return redirect()->route('books.show', $book)
-            ->with('success', 'Review deleted successfully!');
+        return back()->with('success', 'Review deleted successfully!');
     }
 }

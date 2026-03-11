@@ -45,7 +45,7 @@ class NewOrderNotification extends Notification
             ->line('Customer Email: ' . $this->order->user->email)
             ->line('Order Total: $' . number_format($this->order->total_amount, 2))
             ->line('Items: ' . $this->order->orderItems->count())
-            ->action('View Order Details', route('admin.orders.show', $this->order))
+            ->action('View Order Details', route('orders.show', $this->order))
             ->line('Please process this order promptly.');
     }
 

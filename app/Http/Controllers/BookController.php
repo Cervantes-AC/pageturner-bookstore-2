@@ -82,12 +82,16 @@ class BookController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Book::class);
+
         $categories = Category::all();
         return view('books.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Book::class);
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
@@ -121,12 +125,16 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
+        $this->authorize('update', $book);
+
         $categories = Category::all();
         return view('books.edit', compact('book', 'categories'));
     }
 
     public function update(Request $request, Book $book)
     {
+        $this->authorize('update', $book);
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
@@ -151,6 +159,8 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return redirect()->route('books.index')

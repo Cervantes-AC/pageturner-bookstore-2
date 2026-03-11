@@ -90,10 +90,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        // Only allow owner or admin to view
-        if (auth()->id() !== $order->user_id && !auth()->user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('view', $order);
 
         $order->load('orderItems.book');
         return view('orders.show', compact('order'));
@@ -101,9 +98,7 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, Order $order)
     {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('updateStatus', $order);
 
         $request->validate([
             'status' => 'required|in:pending,processing,completed,cancelled',
