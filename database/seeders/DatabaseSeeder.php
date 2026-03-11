@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Book;
+use App\Models\Review;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -205,8 +206,193 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('✓ Seeded 100 books across 10 categories');
-        $this->command->info('✓ Admin: admin@pageturner.com / password');
-        $this->command->info('✓ Customer: customer@pageturner.com / password');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Additional Customers for Reviews
+        |--------------------------------------------------------------------------
+        */
+        $customers = [
+            ['name' => 'Sarah Johnson', 'email' => 'sarah.j@example.com'],
+            ['name' => 'Michael Chen', 'email' => 'michael.c@example.com'],
+            ['name' => 'Emma Williams', 'email' => 'emma.w@example.com'],
+            ['name' => 'David Martinez', 'email' => 'david.m@example.com'],
+            ['name' => 'Lisa Anderson', 'email' => 'lisa.a@example.com'],
+            ['name' => 'James Taylor', 'email' => 'james.t@example.com'],
+            ['name' => 'Maria Garcia', 'email' => 'maria.g@example.com'],
+            ['name' => 'Robert Brown', 'email' => 'robert.b@example.com'],
+            ['name' => 'Jennifer Lee', 'email' => 'jennifer.l@example.com'],
+            ['name' => 'Christopher Davis', 'email' => 'chris.d@example.com'],
+            ['name' => 'Amanda Wilson', 'email' => 'amanda.w@example.com'],
+            ['name' => 'Daniel Rodriguez', 'email' => 'daniel.r@example.com'],
+            ['name' => 'Jessica Moore', 'email' => 'jessica.m@example.com'],
+            ['name' => 'Matthew Jackson', 'email' => 'matthew.j@example.com'],
+            ['name' => 'Ashley White', 'email' => 'ashley.w@example.com'],
+            ['name' => 'Joshua Harris', 'email' => 'joshua.h@example.com'],
+            ['name' => 'Stephanie Martin', 'email' => 'stephanie.m@example.com'],
+            ['name' => 'Andrew Thompson', 'email' => 'andrew.t@example.com'],
+            ['name' => 'Nicole Clark', 'email' => 'nicole.c@example.com'],
+            ['name' => 'Ryan Lewis', 'email' => 'ryan.l@example.com'],
+        ];
+
+        foreach ($customers as $customer) {
+            User::create([
+                'name' => $customer['name'],
+                'email' => $customer['email'],
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+                'role' => 'customer'
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Realistic Reviews
+        |--------------------------------------------------------------------------
+        */
+        $reviewTemplates = [
+            // 5-star reviews
+            [
+                'rating' => 5,
+                'comments' => [
+                    'Absolutely brilliant! One of the best books I\'ve ever read. The writing is captivating and the story stays with you long after you finish.',
+                    'A masterpiece! I couldn\'t put it down. The characters are so well-developed and the plot is engaging from start to finish.',
+                    'Outstanding work! This book exceeded all my expectations. Highly recommend to anyone looking for a great read.',
+                    'Perfect in every way. The author\'s storytelling ability is exceptional. This is a must-read!',
+                    'Five stars aren\'t enough! This book changed my perspective and I\'ve already recommended it to all my friends.',
+                    'Phenomenal read! The depth of the narrative and character development is truly remarkable. I was completely immersed.',
+                    'Incredible! This book has everything - great pacing, memorable characters, and a story that resonates deeply.',
+                    'Best book I\'ve read this year! The author\'s prose is beautiful and the themes are thought-provoking.',
+                    'Absolutely loved it! From the first page to the last, I was hooked. Can\'t wait to read more from this author.',
+                    'A true gem! This book deserves all the praise it gets. Beautifully written and deeply moving.',
+                    'Stunning work! The storytelling is masterful and the emotional impact is profound. Highly recommended!',
+                    'Exceptional! Every chapter was a delight. The author has created something truly special here.',
+                    'Brilliant from start to finish! The plot twists kept me guessing and the ending was perfect.',
+                    'One of those rare books that stays with you forever. Absolutely magnificent!',
+                    'Flawless execution! The writing, characters, and story all come together beautifully.',
+                ]
+            ],
+            // 4-star reviews
+            [
+                'rating' => 4,
+                'comments' => [
+                    'Really enjoyed this book! Well-written with interesting characters. A few slow parts but overall a great read.',
+                    'Solid read with compelling themes. The pacing was good and I found myself thinking about it days later.',
+                    'Very good book! The author has a unique voice and the story is engaging. Would definitely recommend.',
+                    'Great storytelling! Some parts could have been tighter, but the overall experience was very satisfying.',
+                    'Impressive work. The narrative kept me hooked and the ending was particularly strong.',
+                    'Thoroughly enjoyed this! The characters felt real and the plot was well-constructed. Minor pacing issues but still excellent.',
+                    'Strong book with memorable moments. The writing style is engaging and the themes are relevant.',
+                    'Very well done! A few predictable moments but the execution was solid throughout.',
+                    'Great read! The author clearly knows their craft. Looking forward to more from them.',
+                    'Highly entertaining! The story flows well and the characters are likeable. Would read again.',
+                    'Excellent book! Lost half a star for some slow sections, but otherwise fantastic.',
+                    'Really good! The plot kept me engaged and the writing was polished. Definitely worth your time.',
+                    'Compelling story with strong character arcs. A few minor flaws but nothing that detracted from my enjoyment.',
+                    'Well-crafted and engaging. The author has a talent for creating vivid scenes and authentic dialogue.',
+                    'Impressive debut/work! Shows great promise and delivers on most fronts. Recommended!',
+                ]
+            ],
+            // 3-star reviews
+            [
+                'rating' => 3,
+                'comments' => [
+                    'Decent read. It had its moments but didn\'t quite live up to the hype. Still worth reading if you\'re interested in the genre.',
+                    'Good but not great. The concept was interesting but the execution could have been better. Average overall.',
+                    'It was okay. Some parts were engaging while others dragged. Might appeal more to certain readers.',
+                    'Mixed feelings about this one. Good writing but the story didn\'t fully capture my attention.',
+                    'Not bad, but not exceptional either. Has some interesting ideas but falls short in places.',
+                    'Middle of the road. The premise was promising but the delivery was inconsistent.',
+                    'Readable but forgettable. Nothing particularly wrong with it, but nothing that stands out either.',
+                    'Fair read. Some good moments balanced by some weaker sections. Your mileage may vary.',
+                    'Okay for what it is. If you\'re a fan of the genre you might enjoy it more than I did.',
+                    'Moderately entertaining. The story has potential but needed more development in key areas.',
+                    'Average book. Not terrible but not memorable either. Fine for a casual read.',
+                    'Somewhat enjoyable. The beginning was strong but it lost momentum halfway through.',
+                    'Hit or miss. Some chapters were great, others felt like filler. Overall just okay.',
+                    'Decent effort but could have been better. The ideas are there but the execution is lacking.',
+                ]
+            ],
+            // 2-star reviews
+            [
+                'rating' => 2,
+                'comments' => [
+                    'Disappointing. Expected more based on the reviews. The plot was predictable and characters felt flat.',
+                    'Struggled to finish this one. The pacing was off and I couldn\'t connect with the story.',
+                    'Not for me. While the writing was decent, the story just didn\'t engage me at all.',
+                    'Below average. Had potential but didn\'t deliver. Wouldn\'t recommend unless you\'re a die-hard fan.',
+                    'Underwhelming. The concept sounded interesting but the execution fell flat.',
+                    'Hard to get through. The characters were one-dimensional and the plot was predictable.',
+                    'Not great. Too many clichés and the pacing dragged throughout.',
+                    'Disappointing read. Expected much more based on the premise and reviews.',
+                    'Struggled with this one. The writing style didn\'t work for me and the story felt forced.',
+                    'Below expectations. Some good ideas but poorly executed overall.',
+                ]
+            ],
+            // 1-star reviews (rare)
+            [
+                'rating' => 1,
+                'comments' => [
+                    'Really didn\'t enjoy this. The story was confusing and poorly structured. Had to force myself to finish.',
+                    'Not what I expected at all. Couldn\'t get into it despite multiple attempts.',
+                    'Very disappointing. The plot made no sense and the characters were completely unbelievable.',
+                    'Couldn\'t finish it. The writing was poor and the story went nowhere.',
+                    'Not recommended. This book has serious issues with pacing, character development, and plot coherence.',
+                ]
+            ],
+        ];
+
+        $allUsers = User::where('role', 'customer')->get();
+        $allBooks = Book::all();
+
+        // Add reviews to books (weighted towards higher ratings)
+        foreach ($allBooks as $book) {
+            // Random number of reviews per book (3-15 for more reviews)
+            $reviewCount = rand(3, 15);
+            
+            $usedUsers = [];
+            
+            for ($i = 0; $i < $reviewCount; $i++) {
+                // Weighted random rating (more 4-5 stars, fewer 1-2 stars)
+                $rand = rand(1, 100);
+                if ($rand <= 40) {
+                    $ratingIndex = 0; // 5 stars (40%)
+                } elseif ($rand <= 75) {
+                    $ratingIndex = 1; // 4 stars (35%)
+                } elseif ($rand <= 90) {
+                    $ratingIndex = 2; // 3 stars (15%)
+                } elseif ($rand <= 97) {
+                    $ratingIndex = 3; // 2 stars (7%)
+                } else {
+                    $ratingIndex = 4; // 1 star (3%)
+                }
+
+                $template = $reviewTemplates[$ratingIndex];
+                $comment = $template['comments'][array_rand($template['comments'])];
+
+                // Get a user that hasn't reviewed this book yet
+                $availableUsers = $allUsers->whereNotIn('id', $usedUsers);
+                if ($availableUsers->isEmpty()) {
+                    break; // No more unique users available
+                }
+                
+                $user = $availableUsers->random();
+                $usedUsers[] = $user->id;
+
+                Review::create([
+                    'user_id' => $user->id,
+                    'book_id' => $book->id,
+                    'rating' => $template['rating'],
+                    'comment' => $comment,
+                    'created_at' => now()->subDays(rand(1, 180)),
+                ]);
+            }
+        }
+
+        $totalReviews = Review::count();
+        $this->command->info('✓ Added ' . $totalReviews . ' realistic reviews to books');
+        $this->command->info('✓ Admin: aaronclydeccervantes@gmail.com / password');
+        $this->command->info('✓ Customer: customer@gmail.com / password');
     }
 
     private function generateISBN()
