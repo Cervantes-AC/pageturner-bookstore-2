@@ -18,12 +18,10 @@ class DashboardController extends Controller
             abort(403, 'Access denied. Admin privileges required.');
         }
 
-        $stats = [
-            'total_users' => User::count(),
-            'total_books' => Book::count(),
-            'total_categories' => Category::count(),
-            'total_orders' => Order::count(),
-        ];
+        $totalUsers = User::count();
+        $totalBooks = Book::count();
+        $totalCategories = Category::count();
+        $totalOrders = Order::count();
 
         $recentOrders = Order::with(['user', 'orderItems.book'])
             ->latest()
@@ -37,11 +35,14 @@ class DashboardController extends Controller
 
         $recentReviews = Review::with(['user', 'book'])
             ->latest()
-            ->take(10)
+            ->take(5)
             ->get();
 
         return view('dashboard.admin', compact(
-            'stats',
+            'totalUsers',
+            'totalBooks',
+            'totalCategories',
+            'totalOrders',
             'recentOrders',
             'orderStatusSummary',
             'recentReviews'
@@ -52,11 +53,9 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $orderSummary = [
-            'total_orders' => $user->orders()->count(),
-            'pending_orders' => $user->orders()->where('status', 'pending')->count(),
-            'completed_orders' => $user->orders()->where('status', 'completed')->count(),
-        ];
+        $totalOrders = $user->orders()->count();
+        $pendingOrders = $user->orders()->where('status', 'pending')->count();
+        $completedOrders = $user->orders()->where('status', 'completed')->count();
 
         $recentOrders = $user->orders()
             ->with(['orderItems.book'])
@@ -73,18 +72,19 @@ class DashboardController extends Controller
         ->take(6)
         ->get();
 
-        $reviewActivity = $user->reviews()
+        $myReviews = $user->reviews()
             ->with('book')
             ->latest()
             ->take(5)
             ->get();
 
         return view('dashboard.customer', compact(
-            'user',
-            'orderSummary',
+            'totalOrders',
+            'pendingOrders',
+            'completedOrders',
             'recentOrders',
             'recentPurchases',
-            'reviewActivity'
+            'myReviews'
         ));
     }
 }
