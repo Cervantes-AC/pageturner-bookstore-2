@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
     // Creating orders requires email verification
     Route::middleware('verified')->group(function () {
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+        Route::get('/orders/verify/2fa', [OrderController::class, 'show2FAVerification'])->name('orders.verify2fa');
+        Route::post('/orders/verify/2fa', [OrderController::class, 'verify2FA'])->name('orders.verify2fa.submit');
+        Route::post('/orders/verify/2fa/resend', [OrderController::class, 'resend2FA'])->name('orders.verify2fa.resend');
     });
 });
 

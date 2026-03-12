@@ -8,6 +8,29 @@
         <p class="text-gray-600 mt-2">Complete your order</p>
     </div>
 
+    <!-- Security Notice -->
+    <div class="mb-6 bg-gradient-to-r from-blue-50 to-primary-50 border border-blue-200 rounded-xl p-5 animate-fade-in">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-primary-600 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                    🔒 Secure Checkout with 2FA Verification
+                </h3>
+                <p class="text-sm text-gray-700">
+                    For your security, you'll need to verify your order with a code sent to your email 
+                    <span class="font-medium text-primary-600">{{ auth()->user()->email }}</span> 
+                    before completing the purchase.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2">
             <div class="card p-8 animate-slide-up">
@@ -72,11 +95,16 @@
                         </a>
                         <button type="submit" class="btn-primary flex-1 flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                             </svg>
-                            Place Order
+                            Continue to Verification
                         </button>
                     </div>
+
+                    <p class="text-xs text-gray-500 text-center mt-4">
+                        By placing this order, you agree to our terms and conditions. 
+                        You will receive a verification code via email to complete your purchase.
+                    </p>
                 </form>
             </div>
         </div>

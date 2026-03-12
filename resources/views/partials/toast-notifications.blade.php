@@ -1,3 +1,4 @@
+@once
 <div x-data="toastManager()" 
      x-init="init()"
      @toast.window="addToast($event.detail)"
@@ -136,3 +137,4 @@ window.showToast = function(message, type = 'info', description = '') {
     }));
 };
 </script>
+@endonce
