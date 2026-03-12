@@ -10,6 +10,7 @@ class HomeController extends Controller
     public function index()
     {
         $featuredBooks = Book::with('category')
+            ->where('is_featured', true)
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();

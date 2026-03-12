@@ -101,10 +101,14 @@ class BookController extends Controller
             'stock_quantity' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|max:2048',
+            'is_featured' => 'nullable|boolean',
         ]);
 
         // Auto-generate ISBN
         $validated['isbn'] = $this->generateISBN();
+        
+        // Handle checkbox (if not checked, it won't be in request)
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $request->file('cover_image')
@@ -144,7 +148,11 @@ class BookController extends Controller
             'stock_quantity' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|max:2048',
+            'is_featured' => 'nullable|boolean',
         ]);
+
+        // Handle checkbox (if not checked, it won't be in request)
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $request->file('cover_image')

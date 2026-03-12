@@ -19,6 +19,7 @@ class Book extends Model
         'stock_quantity',
         'description',
         'cover_image',
+        'is_featured',
     ];
 
     public function category()

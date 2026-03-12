@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Book;
 use App\Models\Review;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -202,8 +204,27 @@ class DatabaseSeeder extends Seeder
                 'stock_quantity' => $book['stock'],
                 'publication_year' => $book['year'],
                 'description' => 'A compelling read that has captivated readers worldwide. ' . $book['title'] . ' by ' . $book['author'] . ' is a must-have for any book collection.',
+                'is_featured' => false, // Will set featured books later
             ]);
         }
+
+        // Mark some popular books as featured (12 books across different categories)
+        $featuredTitles = [
+            'Atomic Habits',
+            'Sapiens',
+            'Harry Potter and the Sorcerer\'s Stone',
+            'The Hobbit',
+            'Dune',
+            '1984',
+            'To Kill a Mockingbird',
+            'The Great Gatsby',
+            'Gone Girl',
+            'The Notebook',
+            'Clean Code',
+            'Think and Grow Rich',
+        ];
+
+        Book::whereIn('title', $featuredTitles)->update(['is_featured' => true]);
 
         $this->command->info('✓ Seeded 100 books across 10 categories');
 
@@ -391,6 +412,110 @@ class DatabaseSeeder extends Seeder
 
         $totalReviews = Review::count();
         $this->command->info('✓ Added ' . $totalReviews . ' realistic reviews to books');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Sample Orders
+        |--------------------------------------------------------------------------
+        */
+        $statuses = ['pending', 'processing', 'completed', 'cancelled'];
+        $addresses = [
+            '123 Main Street, Manila, Metro Manila 1000, Philippines',
+            '456 Rizal Avenue, Quezon City, Metro Manila 1100, Philippines',
+            '789 EDSA Boulevard, Makati City, Metro Manila 1200, Philippines',
+            '321 Bonifacio Drive, Taguig City, Metro Manila 1630, Philippines',
+            '654 Roxas Boulevard, Pasay City, Metro Manila 1300, Philippines',
+            '987 Commonwealth Avenue, Quezon City, Metro Manila 1121, Philippines',
+            '147 Ortigas Avenue, Pasig City, Metro Manila 1600, Philippines',
+            '258 Shaw Boulevard, Mandaluyong City, Metro Manila 1550, Philippines',
+            '369 Katipunan Avenue, Quezon City, Metro Manila 1108, Philippines',
+            '741 Marcos Highway, Marikina City, Metro Manila 1800, Philippines',
+        ];
+
+        $phoneNumbers = [
+            '+63 917 123 4567',
+            '+63 918 234 5678',
+            '+63 919 345 6789',
+            '+63 920 456 7890',
+            '+63 921 567 8901',
+            '+63 922 678 9012',
+            '+63 923 789 0123',
+            '+63 924 890 1234',
+            '+63 925 901 2345',
+            '+63 926 012 3456',
+        ];
+
+        // Create 30-50 orders
+        $orderCount = rand(30, 50);
+        
+        for ($i = 0; $i < $orderCount; $i++) {
+            $user = $allUsers->random();
+            $orderDate = now()->subDays(rand(1, 120));
+            
+            // Determine status based on order age (older orders more likely to be completed)
+            $daysAgo = $orderDate->diffInDays(now());
+            if ($daysAgo > 60) {
+                // Old orders: mostly completed or cancelled
+                $status = rand(1, 100) <= 85 ? 'completed' : 'cancelled';
+            } elseif ($daysAgo > 30) {
+                // Medium age: mix of completed, processing, and some cancelled
+                $rand = rand(1, 100);
+                if ($rand <= 70) {
+                    $status = 'completed';
+                } elseif ($rand <= 85) {
+                    $status = 'processing';
+                } else {
+                    $status = 'cancelled';
+                }
+            } elseif ($daysAgo > 7) {
+                // Recent: mostly processing or completed
+                $status = rand(1, 100) <= 60 ? 'completed' : 'processing';
+            } else {
+                // Very recent: pending or processing
+                $status = rand(1, 100) <= 50 ? 'pending' : 'processing';
+            }
+
+            // Create order
+            $order = Order::create([
+                'user_id' => $user->id,
+                'total_amount' => 0, // Will calculate after adding items
+                'status' => $status,
+                'shipping_name' => $user->name,
+                'shipping_phone' => $phoneNumbers[array_rand($phoneNumbers)],
+                'shipping_address' => $addresses[array_rand($addresses)],
+                'created_at' => $orderDate,
+                'updated_at' => $orderDate,
+            ]);
+
+            // Add 1-5 items to the order
+            $itemCount = rand(1, 5);
+            $totalAmount = 0;
+            $orderedBooks = [];
+
+            for ($j = 0; $j < $itemCount; $j++) {
+                // Get a book that hasn't been added to this order yet
+                $book = $allBooks->whereNotIn('id', $orderedBooks)->random();
+                $orderedBooks[] = $book->id;
+
+                $quantity = rand(1, 3);
+                $unitPrice = $book->price;
+                $subtotal = $quantity * $unitPrice;
+                $totalAmount += $subtotal;
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'book_id' => $book->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                ]);
+            }
+
+            // Update order total
+            $order->update(['total_amount' => $totalAmount]);
+        }
+
+        $totalOrders = Order::count();
+        $this->command->info('✓ Created ' . $totalOrders . ' sample orders with items');
         $this->command->info('✓ Admin: aaronclydeccervantes@gmail.com / password');
         $this->command->info('✓ Customer: customer@gmail.com / password');
     }
